@@ -1,0 +1,32 @@
+---
+import header_amalgam from "../assets/header_amalgam.png";
+---
+
+<div class="header">
+  <img
+    src={header_amalgam.src}
+    width={header_amalgam.width}
+    height={header_amalgam.height}
+  />
+  <div class="header__side-border"></div>
+</div>
+
+<style>
+  @reference "tailwindcss";
+
+  .header {
+    position: relative;
+  }
+  .header__side-border {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    height: 32%;
+
+    @apply border-[#826657] border-x-[0.158vw] rounded-t-sm;
+  }
+
+  .header img {
+    width: 100%;
+  }
+</style>

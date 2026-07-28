@@ -1,0 +1,119 @@
+---
+import PlatformBox from "../components/PlatformBox.astro";
+import DownloadPage from "../layouts/DownloadPage.astro";
+
+const platformBoxes = [
+  {
+    platform: "Windows",
+    icon: "fa7-brands:windows",
+    url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/win10+",
+    additionalUrls: [
+      {
+        url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/win64",
+        text: "Windows 7/8/8.1 (x64)",
+      },
+    ],
+  },
+  {
+    platform: "macOS",
+    icon: "fa7-brands:apple",
+    url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/macOS",
+    subtitle: "(for macOS 10.13 or later)",
+    additionalUrls: [],
+  },
+  {
+    platform: "Linux",
+    icon: "fa7-brands:linux",
+    url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/linux2.35",
+    additionalUrls: [],
+  },
+];
+---
+
+<DownloadPage linkToDevelopment={true}>
+  <div class="section-box">
+    <b>Latest stable version</b>: <span id="version-span">???</span>
+  </div>
+
+  <div id="recommended-download" class="hidden section-box">
+    <h2>Recommended download for your system</h2>
+
+    <div class="platformBox w-full lg:w-fit m-auto">
+      <div class="platformHeader" id="recommended-download__name">Name</div>
+      <div class="platformDownload">
+        <a
+          id="recommended-download__link"
+          href="/"
+          target="_blank"
+          rel="noreferrer"
+          class="downloadButton">Download</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <Fragment slot="download-boxes">
+    {
+      platformBoxes.map((platformBoxData) => (
+        <PlatformBox platformBoxData={platformBoxData} />
+      ))
+    }
+  </Fragment>
+</DownloadPage>
+
+<script>
+  import { getOS, os } from "../lib/getOS";
+
+  const recommendedMap = {
+    [os.ChromeOS]: {
+      name: "Linux",
+      url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/linux2.35",
+    },
+    [os.Linux]: {
+      name: "Linux",
+      url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/linux2.35",
+    },
+    [os.macOS]: {
+      name: "MacOS",
+      url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/macOS",
+    },
+    [os.Windows_10plus]: {
+      name: "Windows (x64)",
+      url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/win10+",
+    },
+    [os.Windows_x64]: {
+      name: "Windows 7/8/8.1 (x64)",
+      url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/win64",
+    },
+  };
+
+  getOS().then((operatingSystem) => {
+    let recommendedDownload = os.Unknown;
+    if (operatingSystem in recommendedMap) {
+      recommendedDownload = operatingSystem;
+    }
+    if (recommendedDownload === os.Unknown) {
+      return;
+    }
+
+    const recommendedDownloadName = document.getElementById(
+      "recommended-download__name",
+    )! as HTMLDivElement;
+    const recommendedDownloadLink: HTMLAnchorElement = document.getElementById(
+      "recommended-download__link",
+    )! as HTMLAnchorElement;
+
+    document.getElementById("recommended-download")!.classList.remove("hidden");
+    const recommendedDownloadData =
+      recommendedMap[recommendedDownload as keyof typeof recommendedMap];
+    recommendedDownloadName.innerText = recommendedDownloadData.name;
+    recommendedDownloadLink.href = recommendedDownloadData.url;
+  });
+
+  const versionSpan = document.getElementById("version-span")!;
+  fetch("/api/v1/Update/Channels/stable/Releases/Latest")
+    .then((res) => res.json())
+    .then((jsonRes) => {
+      versionSpan.textContent = jsonRes.release.name;
+    });
+</script>

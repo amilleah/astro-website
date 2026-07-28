@@ -1,0 +1,81 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+---
+
+<Layout>
+  <div class="wrapper">
+    <Header />
+    <div class="content">
+      <h2>ClanGen</h2>
+      <a href="/download"><div class="download_btn">Download Now</div></a>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  @reference "tailwindcss";
+
+  .wrapper {
+    width: 70%;
+    margin: 0 auto;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .content {
+    width: 100%;
+    background-color: #2f2918;
+    margin-top: -5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 20px;
+    border-radius: 0 0 8px 8px;
+    box-shadow:
+      0px 10px 10px 0px rgba(0, 0, 0, 0.22),
+      0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border: 0.158vw solid #826657;
+    border-top: none;
+    box-sizing: border-box;
+  }
+
+  .content h2 {
+    @apply text-[2rem] md:text-[3rem] lg:text-[7rem];
+    line-height: normal;
+    font-family: var(--font-clangen), sans-serif;
+    text-shadow: 4px 8px 4px rgba(0, 0, 0, 0.75);
+    font-weight: 400;
+    padding-bottom: 24px;
+    color: #efe5ce;
+  }
+
+  .content a {
+    text-decoration: none;
+  }
+
+  .download_btn {
+    @apply border-[#7e6041] border-4 lg:border-[8.752px];
+    padding: 7px;
+    padding-left: 11px;
+    background: #67582e;
+    box-shadow:
+      0px 1px 3px 0px rgba(0, 0, 0, 0.12) inset,
+      0px 1px 2px 0px rgba(0, 0, 0, 0.24) inset;
+  }
+
+  .download_btn,
+  .download_btn:link,
+  .download_btn:visited,
+  .download_btn:active {
+    @apply text-[1rem] lg:text-[2rem];
+    color: #f1e5cb;
+    font-family: var(--font-clangen), sans-serif;
+    line-height: normal;
+    text-decoration: none;
+  }
+</style>

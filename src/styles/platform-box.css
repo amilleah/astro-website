@@ -1,0 +1,53 @@
+.platformBox {
+  font-family: var(--font-roboto);
+  border-radius: 5px;
+  border: 1px solid #3d4144;
+  overflow: hidden;
+  background-color: #181a1b;
+  color: white;
+}
+
+.platformDownload {
+  padding: 30px;
+  text-align: center;
+}
+
+.altDownload,
+.downloadButton {
+  text-decoration: none;
+}
+
+.platformHeader {
+  font-weight: bold;
+  background-color: #313537;
+  padding: 15px 25px;
+  text-align: center;
+}
+
+.altDownload {
+  font-size: 0.75em;
+  color: #337dff;
+  display: block;
+}
+.altDownload:hover {
+  text-decoration: underline;
+}
+
+.subtitle {
+  font-size: 0.75em;
+  color: #787878;
+}
+
+.downloadButton {
+  background-color: #24934f;
+  color: white;
+  padding: 15px 40px;
+  border-radius: 5px;
+  font-weight: 500;
+  display: block;
+}
+
+.downloadButton:hover {
+  background-color: #3ca14f;
+  text-decoration: none;
+}
