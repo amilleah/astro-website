@@ -1,32 +1,123 @@
 ---
-import header_amalgam from "../assets/header_amalgam.png";
+import type { ImageMetadata } from "astro";
+import Button from "./Button.astro";
+import Frame from "./Frame.astro";
+
+interface Props {
+  src?: ImageMetadata;
+  alt?: string;
+}
+
+const { src, alt = "" } = Astro.props;
 ---
 
-<div class="header">
-  <img
-    src={header_amalgam.src}
-    width={header_amalgam.width}
-    height={header_amalgam.height}
-  />
-  <div class="header__side-border"></div>
-</div>
+<article class="hero">
+  <div class="header-wrap">
+    {src && (
+      <div class="header">
+        <img
+          src={src.src}
+          width={src.width}
+          height={src.height}
+          alt={alt}
+        />
+        <slot name="overlay" />
+      </div>
+    )}
+  </div>
+
+  <Frame class="header-frame" variant="header">
+    <slot>
+      <h2>ClanGen</h2>
+      <h3>Build your Clan. Tell their story.</h3>
+      <Button href="/download" size="lg">
+        Download Now
+      </Button>
+    </slot>
+  </Frame>
+</article>
 
 <style>
   @reference "tailwindcss";
 
-  .header {
+  .hero {
+    width: 100%;
+    max-width: 100%;
+    margin-inline: auto;
+    padding-top: var(--header-offset);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     position: relative;
   }
-  .header__side-border {
-    position: absolute;
-    width: 100%;
-    bottom: 0;
-    height: 32%;
 
-    @apply border-[#826657] border-x-[0.158vw] rounded-t-sm;
+  .header-wrap {
+    width: calc(100% - 10px);
+    margin-inline: auto;
+    position: relative;
+    z-index: 3;
+    line-height: 0;
+  }
+
+  .header {
+    width: 100%;
+    position: relative;
+    z-index: 3;
+    display: block;
+    overflow: hidden;
   }
 
   .header img {
+    position: relative;
     width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    pointer-events: none;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
+  }
+
+  :global(.header-frame) {
+    --frame-image: var(--frame-header-image);
+    width: 100%;
+    margin-top: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  :global(.header-frame.header .content) {
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    gap: calc(var(--space) * 3);
+    padding-top: calc(var(--space) * 2);
+    padding-bottom: var(--space);
+    padding-left: var(--space);
+    padding-right: var(--space);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  :global(.header-frame .content) h2 {
+    font-size: clamp(2.75rem, 8vmin, 4.5rem);
+    line-height: normal;
+    font-family: var(--font-clangen), sans-serif;
+    text-shadow: 4px 8px 4px rgba(0, 0, 0, 0.75);
+    font-weight: 400;
+    color: var(--color-text);
+  }
+
+  h3 {
+    color: var(--color-heading);
+    font-family: var(--font-clangen), sans-serif;
+    font-size: 1.125rem;
+    line-height: 1;
+    font-weight: 500;
+    margin-top: calc(var(--space) * -1.5);
+    margin-bottom: calc(var(--space) * -1.5);
   }
 </style>
