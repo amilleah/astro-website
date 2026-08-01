@@ -45,7 +45,7 @@ export default defineConfig({
     icon({
       include: {
         "fa7-solid": ["bars"],
-        "fa7-brands": ["apple", "linux", "windows"],
+        "fa7-brands": ["apple", "linux", "windows", "github"],
       },
     }),
   ],
