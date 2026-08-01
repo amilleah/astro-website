@@ -1,0 +1,106 @@
+---
+import normal from "../assets/generated_buttons/general_normal.png?url";
+import hovered from "../assets/generated_buttons/general_hovered.png?url";
+
+interface Props {
+  href?: string;
+  class?: string;
+  /**
+   * Drives border-width, padding and font-size from one place so every
+   * button on the site is visually consistent for its role in the layout:
+   *  - "sm": navbar / inline utility links
+   *  - "md": default in-page actions (default)
+   *  - "lg": primary hero call-to-action
+   */
+  size?: "sm" | "md" | "lg";
+  [key: string]: any;
+}
+
+const {
+  href,
+  class: className,
+  size = "md",
+  ...rest
+} = Astro.props;
+const Tag = href ? "a" : "button";
+const vars = `--btn-normal:url(${normal});--btn-hovered:url(${hovered});`;
+---
+
+<Tag
+  href={href}
+  class:list={["btn", `btn--${size}`, className]}
+  style={vars}
+  {...rest}
+>
+  <span class="btn__label"><slot /></span>
+</Tag>
+
+<style>
+  .btn {
+    border-style: solid;
+    border-image-source: var(--btn-normal);
+    border-image-slice: 9 fill;
+    border-image-repeat: round;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 0;
+    line-height: 1;
+    background: transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+      transform 0.12s ease,
+      filter 0.12s ease;
+  }
+
+  .btn:hover {
+    border-image-source: var(--btn-hovered);
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+    filter: brightness(0.96);
+  }
+
+  .btn__label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    font-family: var(--font-clangen), sans-serif;
+    color: var(--color-text);
+    line-height: 1;
+    padding-bottom: 2px;
+    white-space: nowrap;
+  }
+
+  /* Size variants: the single place button proportions are defined. */
+  .btn--sm {
+    border-width: 20px;
+    padding: 0 10px;
+  }
+  .btn--sm .btn__label {
+    font-size: clamp(0.75rem, 1.6vmin, 0.9rem);
+  }
+
+  .btn--md {
+    border-width: 20px;
+    padding: 0 14px;
+  }
+  .btn--md .btn__label {
+    font-size: clamp(0.875rem, 2vmin, 1.05rem);
+  }
+
+  .btn--lg {
+    border-width: 20px;
+    padding: 0 20px;
+    min-width: 220px;
+  }
+  .btn--lg .btn__label {
+    font-size: clamp(1rem, 2.4vmin, 1.25rem);
+  }
+</style>

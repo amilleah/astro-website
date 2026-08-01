@@ -1,1 +1,58 @@
 @import "tailwindcss";
+
+:root {
+  font-size: 120%;
+
+  --color-bg: #302915;
+  --color-surface: #2f2918;
+  --color-border: #776045;
+
+  --color-text: #efe5ce;
+  --color-heading: #ac9d72;
+  --color-text-muted: #d8cbb0;
+
+  --cell-bg: #181a1b;
+  --cell-header: #313537;
+  --cell-border: #3d4144;
+  --cell-text: #ffffff;
+  --cell-text-subtle: #787878;
+  --cell-link: #337dff;
+
+  --color-download: #24934f;
+  --color-download-hover: #3ca14f;
+  --color-warn: #df3b3c;
+
+  --radius-card: 0;
+  --space: 24px;
+  --hero-width: min(100% - 2 * var(--space), 960px);
+  --content-width: min(100% - 2 * var(--space), 960px);
+  --header-offset: calc(var(--space) + clamp(var(--space) * 2, 20vh, 24rem));
+
+  --shadow-card:
+    0px 10px 10px 0px rgba(0, 0, 0, 0.22), 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  --shadow-sm: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+
+  --frame-image: url("../assets/frame.png");
+  --frame-header-image: url("../assets/frame_header.png");
+  --frame-width: 12px;
+  --frame-gap: calc(var(--space) + 2 * var(--frame-width));
+}
+
+:is(a, button).btn.gh-cta {
+  font-size: 1rem;
+  border-image-slice: 7 fill;
+  border-width: 14px;
+}
+
+:is(a, button).btn.gh-cta .btn__label {
+  padding-bottom: 0;
+}
+
+.btn.gh-cta .btn__label {
+  gap: 0.25em;
+}
+
+.btn.gh-cta svg {
+  width: 1.6em;
+  height: 1.6em;
+}
