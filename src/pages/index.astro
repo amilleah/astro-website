@@ -1,15 +1,54 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
+import Frame from "../components/Frame.astro";
+import Button from "../components/Button.astro";
+import Screenshots from "../components/Screenshots.astro";
+import { Icon } from "astro-icon/components";
 ---
 
 <Layout>
   <div class="wrapper">
-    <Header />
-    <div class="content">
-      <h2>ClanGen</h2>
-      <a href="/download"><div class="download_btn">Download Now</div></a>
-    </div>
+    <Header title="ClanGen" subtitle="Build your Clan. Tell their story." />
+
+    <Frame class="info">
+      <p>
+        ClanGen is a casual simulation game with a focus on storytelling.
+        <br /><br />
+
+        Build a Clan of cats, then watch it change over time. Influence their
+        strategies and relationships, or simply watch the narratives unfold.
+        <br /><br />
+
+        With <b>millions</b> of unique cat appearances and <b>hundreds</b> of
+        events to discover, the possibilities are endless.
+
+        Every cat has their own story.
+      </p>
+    </Frame>
+
+    <Frame class="info">
+      <h2>Free and Open Source</h2>
+
+      <p>
+        Originally created by just-some-cat on Tumblr, ClanGen was forked by
+        Sablesteel and is now steadily updated and maintained by an
+        ever-growing community of volunteers from all over the world.
+      </p>
+
+      <div class="gh-slot">
+        <Button
+          href="https://github.com/ClanGenOfficial/clangen"
+          target="_blank"
+          rel="noreferrer"
+          size="md"
+        >
+          View on GitHub <Icon name="fa7-brands:github" />
+        </Button>
+      </div>
+    </Frame>
+
+    <Screenshots class="info" />
   </div>
 </Layout>
 
@@ -17,65 +56,97 @@ import Header from "../components/Header.astro";
   @reference "tailwindcss";
 
   .wrapper {
-    width: 70%;
+    width: var(--content-width);
     margin: 0 auto;
     flex-grow: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: column;
+    align-items: stretch;
+    gap: var(--space);
+    padding-top: var(--space);
+    padding-bottom: calc(var(--space) * 2);
   }
 
-  .content {
+  .features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--frame-gap);
+    align-items: stretch;
+  }
+
+  @media (max-width: 640px) {
+    .features {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  :global(.info),
+  :global(.header-frame .content) {
+    font-family: var(--font-roboto), sans-serif;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+    transition: filter 0.15s ease;
+  }
+
+  :global(.info):hover {
+    filter: brightness(1.03);
+  }
+
+  :global(.info--lead) {
+    align-items: center;
+    text-align: center;
+  }
+
+  :global(.info--lead) p {
     width: 100%;
-    background-color: #2f2918;
-    margin-top: -5px;
-    display: flex;
-    flex-direction: column;
+    font-size: 1.6rem;
+  }
+
+  .tagline {
+    color: var(--color-heading);
+  }
+
+  :global(.info--media) {
     align-items: center;
     justify-content: center;
-    padding-bottom: 20px;
-    border-radius: 0 0 8px 8px;
-    box-shadow:
-      0px 10px 10px 0px rgba(0, 0, 0, 0.22),
-      0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-    border: 0.158vw solid #826657;
-    border-top: none;
-    box-sizing: border-box;
   }
 
-  .content h2 {
-    @apply text-[2rem] md:text-[3rem] lg:text-[7rem];
-    line-height: normal;
+  :global(.info--media) img {
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+  }
+
+  :global(.info) h2 {
+    margin: 0;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid color-mix(in srgb, var(--color-heading) 35%, transparent);
+    color: var(--color-heading);
     font-family: var(--font-clangen), sans-serif;
-    text-shadow: 4px 8px 4px rgba(0, 0, 0, 0.75);
-    font-weight: 400;
-    padding-bottom: 24px;
-    color: #efe5ce;
+    font-size: 1.45rem;
+    line-height: 1.35;
+    font-weight: 500;
   }
 
-  .content a {
-    text-decoration: none;
+  :global(.info) p {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.5rem;
+    line-height: 1.35;
   }
 
-  .download_btn {
-    @apply border-[#7e6041] border-4 lg:border-[8.752px];
-    padding: 7px;
-    padding-left: 11px;
-    background: #67582e;
-    box-shadow:
-      0px 1px 3px 0px rgba(0, 0, 0, 0.12) inset,
-      0px 1px 2px 0px rgba(0, 0, 0, 0.24) inset;
+  :global(.info) a:not(.btn) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
-  .download_btn,
-  .download_btn:link,
-  .download_btn:visited,
-  .download_btn:active {
-    @apply text-[1rem] lg:text-[2rem];
-    color: #f1e5cb;
-    font-family: var(--font-clangen), sans-serif;
-    line-height: normal;
-    text-decoration: none;
+  :global(.info) a:not(.btn):hover {
+    color: var(--color-download-hover);
+  }
+
+  .gh-slot {
+    align-self: center;
   }
 </style>

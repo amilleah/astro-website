@@ -26,7 +26,7 @@
   --space: 24px;
   --hero-width: min(100% - 2 * var(--space), 960px);
   --content-width: min(100% - 2 * var(--space), 960px);
-  --header-offset: calc(var(--space) + clamp(var(--space) * 2, 20vh, 24rem));
+  --header-offset: calc(var(--space) + clamp(var(--space) * 2, 10vh, 12rem));
 
   --shadow-card:
     0px 10px 10px 0px rgba(0, 0, 0, 0.22), 0px 4px 4px 0px rgba(0, 0, 0, 0.25);

@@ -5,13 +5,6 @@ import hovered from "../assets/generated_buttons/general_hovered.png?url";
 interface Props {
   href?: string;
   class?: string;
-  /**
-   * Drives border-width, padding and font-size from one place so every
-   * button on the site is visually consistent for its role in the layout:
-   *  - "sm": navbar / inline utility links
-   *  - "md": default in-page actions (default)
-   *  - "lg": primary hero call-to-action
-   */
   size?: "sm" | "md" | "lg";
   [key: string]: any;
 }
@@ -78,7 +71,6 @@ const vars = `--btn-normal:url(${normal});--btn-hovered:url(${hovered});`;
     white-space: nowrap;
   }
 
-  /* Size variants: the single place button proportions are defined. */
   .btn--sm {
     border-width: 20px;
     padding: 0 10px;

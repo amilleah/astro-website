@@ -1,0 +1,294 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import Frame from "./Frame.astro";
+import arrowLeft from "../assets/arrow_left_fancy.png";
+import arrowRight from "../assets/arrow_right_fancy.png";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+
+const screenshotFiles = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/screenshots/*.{png,jpg,jpeg,webp,svg}",
+  { eager: true },
+);
+
+const screenshots = Object.entries(screenshotFiles)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([path, mod]) => {
+    const name = path
+      .split("/")
+      .pop()!
+      .replace(/\.[^.]+$/, "")
+      .replace(/^\d+[-_]?/, "")
+      .replace(/[-_]+/g, " ");
+    const caption = name.replace(/\b\w/g, (c) => c.toUpperCase());
+    return { image: mod.default, caption };
+  });
+---
+
+{
+  screenshots.length > 0 && (
+    <Frame class={`screenshots ${className}`}>
+      <h2>Screenshots</h2>
+
+      <div class="carousel" data-carousel>
+        <div class="carousel__frame">
+          <button
+            type="button"
+            class="carousel__arrow carousel__arrow--prev"
+            data-carousel-prev
+            aria-label="Previous screenshot"
+          >
+            <Image src={arrowLeft} alt="" />
+          </button>
+
+          <div class="carousel__viewport">
+            <div class="carousel__track" data-carousel-track>
+              {screenshots.map(({ image, caption }) => (
+                <div class="carousel__slide">
+                  <Image src={image} alt={caption} widths={[480, 960]} sizes="(min-width: 720px) 720px, 100vw" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="carousel__arrow carousel__arrow--next"
+            data-carousel-next
+            aria-label="Next screenshot"
+          >
+            <Image src={arrowRight} alt="" />
+          </button>
+        </div>
+
+        <p class="carousel__caption" data-carousel-caption>
+          {screenshots[0].caption}
+        </p>
+
+        {screenshots.length > 1 && (
+          <div class="carousel__thumbs" data-carousel-thumbs>
+            {screenshots.map(({ image, caption }, i) => (
+              <button
+                type="button"
+                class="carousel__thumb"
+                data-carousel-thumb
+                data-caption={caption}
+                aria-label={`Go to ${caption}`}
+                aria-current={i === 0 ? "true" : "false"}
+              >
+                <Image src={image} alt="" width={400} />
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </Frame>
+  )
+}
+
+<style>
+  @reference "tailwindcss";
+
+  :global(.screenshots) h2 {
+    margin: 0;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid
+      color-mix(in srgb, var(--color-heading) 35%, transparent);
+    color: var(--color-heading);
+    font-family: var(--font-clangen), sans-serif;
+    font-size: 1.45rem;
+    line-height: 1.35;
+    font-weight: 500;
+  }
+
+  .carousel {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--space) * 0.5);
+  }
+
+  .carousel__frame {
+    width: calc(
+      100% + 2 * var(--card-pad, clamp(1.25rem, 4cqi, 2.25rem))
+    );
+    margin-inline: calc(-1 * var(--card-pad, clamp(1.25rem, 4cqi, 2.25rem)));
+    display: flex;
+    align-items: stretch;
+    border: 2px solid var(--color-border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .carousel__arrow {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--color-heading) 25%, transparent);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    width: clamp(32px, 6vw, 56px);
+    transition:
+      background-color 0.15s ease,
+      filter 0.12s ease;
+  }
+
+  .carousel__arrow :global(img) {
+    width: clamp(14px, 2.2vw, 22px);
+    height: auto;
+    image-rendering: pixelated;
+    pointer-events: none;
+  }
+
+  .carousel__arrow:hover {
+    background: color-mix(in srgb, var(--color-heading) 40%, transparent);
+  }
+
+  .carousel__arrow:active {
+    filter: brightness(0.92);
+  }
+
+  .carousel__viewport {
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  .carousel__track {
+    display: grid;
+  }
+
+  .carousel__slide {
+    display: none;
+    grid-area: 1 / 1;
+    line-height: 0;
+  }
+
+  .carousel__slide.is-active {
+    display: block;
+  }
+
+  .carousel__slide :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+    image-rendering: pixelated;
+  }
+
+  .carousel__caption {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-family: var(--font-roboto), sans-serif;
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .carousel__thumbs {
+    width: 100%;
+    display: flex;
+    gap: calc(var(--space) * 0.4);
+  }
+
+  .carousel__thumb {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0;
+    line-height: 0;
+    background: transparent;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    overflow: hidden;
+    opacity: 0.6;
+    transition:
+      opacity 0.12s ease,
+      border-color 0.12s ease;
+  }
+
+  .carousel__thumb :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+  }
+
+  .carousel__thumb:hover {
+    opacity: 0.85;
+  }
+
+  .carousel__thumb[aria-current="true"] {
+    opacity: 1;
+    border-color: var(--color-heading);
+  }
+</style>
+
+<script>
+  function initCarousels() {
+    document
+      .querySelectorAll<HTMLElement>("[data-carousel]")
+      .forEach((carousel) => {
+        if (carousel.dataset.carouselInit) return;
+        carousel.dataset.carouselInit = "true";
+
+        const track = carousel.querySelector<HTMLElement>(
+          "[data-carousel-track]",
+        );
+        const slides = Array.from(track?.children ?? []) as HTMLElement[];
+        const prevBtn = carousel.querySelector<HTMLButtonElement>(
+          "[data-carousel-prev]",
+        );
+        const nextBtn = carousel.querySelector<HTMLButtonElement>(
+          "[data-carousel-next]",
+        );
+        const caption = carousel.querySelector<HTMLElement>(
+          "[data-carousel-caption]",
+        );
+        const thumbs = Array.from(
+          carousel.querySelectorAll<HTMLButtonElement>(
+            "[data-carousel-thumb]",
+          ),
+        );
+
+        let index = 0;
+
+        function render() {
+          slides.forEach((slide, i) =>
+            slide.classList.toggle("is-active", i === index),
+          );
+          if (caption) caption.textContent = thumbs[index]?.dataset.caption ?? "";
+          thumbs.forEach((thumb, i) =>
+            thumb.setAttribute("aria-current", String(i === index)),
+          );
+        }
+
+        prevBtn?.addEventListener("click", () => {
+          index = (index - 1 + slides.length) % slides.length;
+          render();
+        });
+
+        nextBtn?.addEventListener("click", () => {
+          index = (index + 1) % slides.length;
+          render();
+        });
+
+        thumbs.forEach((thumb, i) => {
+          thumb.addEventListener("click", () => {
+            index = i;
+            render();
+          });
+        });
+
+        render();
+      });
+  }
+
+  initCarousels();
+  document.addEventListener("astro:page-load", initCarousels);
+</script>
