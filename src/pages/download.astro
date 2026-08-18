@@ -1,119 +1,146 @@
 ---
-import PlatformBox from "../components/PlatformBox.astro";
-import DownloadPage from "../layouts/DownloadPage.astro";
-
-const platformBoxes = [
-  {
-    platform: "Windows",
-    icon: "fa7-brands:windows",
-    url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/win10+",
-    additionalUrls: [
-      {
-        url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/win64",
-        text: "Windows 7/8/8.1 (x64)",
-      },
-    ],
-  },
-  {
-    platform: "macOS",
-    icon: "fa7-brands:apple",
-    url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/macOS",
-    subtitle: "(for macOS 10.13 or later)",
-    additionalUrls: [],
-  },
-  {
-    platform: "Linux",
-    icon: "fa7-brands:linux",
-    url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/linux2.35",
-    additionalUrls: [],
-  },
-];
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Tab from "../components/Tab.astro";
+import Button from "../components/Button.astro";
+import Downloads from "../components/Downloads.astro";
+import { Icon } from "astro-icon/components";
 ---
 
-<DownloadPage linkToDevelopment={true}>
-  <div class="section-box">
-    <b>Latest stable version</b>: <span id="version-span">???</span>
-  </div>
+<Layout title="ClanGen Download">
+  <div class="wrapper">
+    <Header>
+      <h2 class="title">Download</h2>
 
-  <div id="recommended-download" class="hidden section-box">
-    <h2>Recommended download for your system</h2>
+      <div class="tabpanel">
+        <div class="tabbar">
+          <div class="tabgroup">
+            <Tab data-tab="stable" href="#stable" active>Stable</Tab>
+            <Tab data-tab="development" href="#development">Development</Tab>
+          </div>
+          <Button
+            href="https://github.com/ClanGenOfficial/clangen"
+            target="_blank"
+            rel="noreferrer"
+            size="md"
+            class="gh-cta"
+          >
+            View on GitHub <Icon name="fa7-brands:github" />
+          </Button>
+        </div>
 
-    <div class="platformBox w-full lg:w-fit m-auto">
-      <div class="platformHeader" id="recommended-download__name">Name</div>
-      <div class="platformDownload">
-        <a
-          id="recommended-download__link"
-          href="/"
-          target="_blank"
-          rel="noreferrer"
-          class="downloadButton">Download</a
-        >
+        <div class="panegrid">
+          <div data-pane="stable" class="pane">
+            <Downloads channel="stable" label="Latest stable version" />
+          </div>
+          <div data-pane="development" class="pane" hidden>
+            <Downloads
+              channel="development"
+              label="Latest development version"
+            />
+          </div>
+        </div>
       </div>
-    </div>
+    </Header>
   </div>
+</Layout>
 
-  <Fragment slot="download-boxes">
-    {
-      platformBoxes.map((platformBoxData) => (
-        <PlatformBox platformBoxData={platformBoxData} />
-      ))
-    }
-  </Fragment>
-</DownloadPage>
+<script is:inline>
+  const tabs = Array.from(document.querySelectorAll("[data-tab]"));
+  const panes = Array.from(document.querySelectorAll("[data-pane]"));
+  const names = tabs.map((tab) => tab.getAttribute("data-tab"));
 
-<script>
-  import { getOS, os } from "../lib/getOS";
-
-  const recommendedMap = {
-    [os.ChromeOS]: {
-      name: "Linux",
-      url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/linux2.35",
-    },
-    [os.Linux]: {
-      name: "Linux",
-      url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/linux2.35",
-    },
-    [os.macOS]: {
-      name: "MacOS",
-      url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/macOS",
-    },
-    [os.Windows_10plus]: {
-      name: "Windows (x64)",
-      url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/win10+",
-    },
-    [os.Windows_x64]: {
-      name: "Windows 7/8/8.1 (x64)",
-      url: "https://clangen.io/api/v1/Update/Channels/stable/Releases/Latest/Artifacts/win64",
-    },
-  };
-
-  getOS().then((operatingSystem) => {
-    let recommendedDownload = os.Unknown;
-    if (operatingSystem in recommendedMap) {
-      recommendedDownload = operatingSystem;
-    }
-    if (recommendedDownload === os.Unknown) {
-      return;
-    }
-
-    const recommendedDownloadName = document.getElementById(
-      "recommended-download__name",
-    )! as HTMLDivElement;
-    const recommendedDownloadLink: HTMLAnchorElement = document.getElementById(
-      "recommended-download__link",
-    )! as HTMLAnchorElement;
-
-    document.getElementById("recommended-download")!.classList.remove("hidden");
-    const recommendedDownloadData =
-      recommendedMap[recommendedDownload as keyof typeof recommendedMap];
-    recommendedDownloadName.innerText = recommendedDownloadData.name;
-    recommendedDownloadLink.href = recommendedDownloadData.url;
-  });
-
-  const versionSpan = document.getElementById("version-span")!;
-  fetch("/api/v1/Update/Channels/stable/Releases/Latest")
-    .then((res) => res.json())
-    .then((jsonRes) => {
-      versionSpan.textContent = jsonRes.release.name;
+  function activate(name) {
+    const active = names.includes(name) ? name : names[0];
+    tabs.forEach((tab) => {
+      const on = tab.getAttribute("data-tab") === active;
+      tab.classList.toggle("tab--active", on);
+      tab.setAttribute("aria-selected", on ? "true" : "false");
     });
+    panes.forEach((pane) => {
+      pane.hidden = pane.getAttribute("data-pane") !== active;
+    });
+  }
+
+  activate(location.hash.slice(1));
+  window.addEventListener("hashchange", () => activate(location.hash.slice(1)));
 </script>
+
+<style>
+  .wrapper {
+    width: var(--content-width);
+    margin: 0 auto;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding-bottom: calc(var(--space) * 2);
+  }
+
+  .title {
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-clangen), sans-serif;
+    font-size: var(--pixel-xl);
+    line-height: normal;
+    font-weight: 400;
+    text-align: center;
+    text-shadow: var(--shadow-text);
+  }
+
+  .tabpanel {
+    --divider: var(--border-divider);
+    --pad: var(--space);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .tabbar {
+    position: relative;
+    z-index: var(--z-raised);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    width: 100%;
+  }
+
+  .tabgroup {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-bottom: 0;
+  }
+
+  .tabbar :is(a, button).btn.gh-cta {
+    margin-bottom: var(--space-3xs);
+  }
+
+  .panegrid {
+    position: relative;
+    z-index: var(--z-base);
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: calc(100% + 2 * var(--pad));
+    margin-inline: calc(-1 * var(--pad));
+    padding: var(--space) var(--pad) 0;
+    border-top: var(--divider) solid var(--color-border);
+  }
+
+  .pane {
+    grid-area: 1 / 1;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .pane[hidden] {
+    display: block;
+    visibility: hidden;
+  }
+</style>

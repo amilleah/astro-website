@@ -4,13 +4,10 @@ interface Props {
   variant?: "default" | "header";
 }
 
-const {
-  class: className = "",
-  variant = "default",
-} = Astro.props;
+const { class: className = "", variant = "default" } = Astro.props;
 ---
 
-<div class={`frame ${variant} ${className}`}>
+<div class:list={["frame", variant, className]}>
   <div class="content">
     <slot />
   </div>
@@ -30,26 +27,24 @@ const {
     border-image-slice: 10 fill;
     border-image-width: var(--frame-width);
     border-image-repeat: repeat;
-
-    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
   }
 
   .frame.header {
     --frame-image: var(--frame-header-image);
-    margin-top: calc(var(--frame-width) * -1);
+    margin-top: calc(-1 * var(--frame-overlap, var(--frame-width)));
   }
 
   .content {
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
-    box-sizing: border-box;
-
-    background-color: var(--color-surface);
 
     display: flex;
     flex-direction: column;
-    gap: calc(var(--space, 1rem) * 0.75);
+    gap: calc(var(--space) * 0.75);
 
-    padding: var(--card-pad, clamp(1.25rem, 4cqi, 2.25rem));
+    padding: var(--card-pad);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-image);
   }
 </style>

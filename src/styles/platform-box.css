@@ -1,15 +1,48 @@
 .platformBox {
-  font-family: var(--font-roboto);
-  border-radius: 5px;
-  border: 1px solid #3d4144;
+  font-family: var(--font-roboto), sans-serif;
+  border-radius: var(--radius-sm);
+  border: var(--border-hairline) solid var(--cell-border);
   overflow: hidden;
-  background-color: #181a1b;
-  color: white;
+  background-color: var(--cell-bg);
+  color: var(--cell-text);
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.platformHeader {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3xs);
+  padding: var(--space-sm) var(--space-lg);
+  background-color: var(--cell-header);
+  text-align: center;
+  font-size: clamp(var(--text-base), 1.6vw, var(--text-xl));
+  font-weight: 700;
+}
+
+.platformHeader svg {
+  display: inline-block;
 }
 
 .platformDownload {
-  padding: 30px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
   text-align: center;
+}
+
+.platformDownload:not(:has(.altDownload, .subtitle))::after {
+  content: "\00a0";
+  display: block;
+  font-size: var(--text-xs);
+  line-height: inherit;
+  visibility: hidden;
 }
 
 .altDownload,
@@ -17,37 +50,43 @@
   text-decoration: none;
 }
 
-.platformHeader {
-  font-weight: bold;
-  background-color: #313537;
-  padding: 15px 25px;
-  text-align: center;
+.altDownload {
+  display: block;
+  color: var(--cell-link);
+  font-size: var(--text-xs);
 }
 
-.altDownload {
-  font-size: 0.75em;
-  color: #337dff;
-  display: block;
-}
 .altDownload:hover {
   text-decoration: underline;
 }
 
 .subtitle {
-  font-size: 0.75em;
-  color: #787878;
+  color: var(--cell-text-subtle);
+  font-size: var(--text-xs);
 }
 
 .downloadButton {
-  background-color: #24934f;
-  color: white;
-  padding: 15px 40px;
-  border-radius: 5px;
-  font-weight: 500;
   display: block;
+  padding: var(--space-sm) var(--space-2xl);
+  border: var(--border-thin) solid var(--cell-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-download);
+  color: #fff;
+  font-weight: 500;
+  font-size: clamp(var(--text-sm), 1.4vw, var(--text-md));
 }
 
 .downloadButton:hover {
-  background-color: #3ca14f;
+  background-color: var(--color-download-hover);
   text-decoration: none;
+}
+
+@media (width >= 80rem) {
+  .platformBox {
+    flex-direction: column;
+  }
+
+  .platformHeader {
+    flex: none;
+  }
 }

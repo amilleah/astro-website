@@ -9,12 +9,7 @@ interface Props {
   [key: string]: any;
 }
 
-const {
-  href,
-  class: className,
-  size = "md",
-  ...rest
-} = Astro.props;
+const { href, class: className, size = "md", ...rest } = Astro.props;
 const Tag = href ? "a" : "button";
 const vars = `--btn-normal:url(${normal});--btn-hovered:url(${hovered});`;
 ---
@@ -31,16 +26,18 @@ const vars = `--btn-normal:url(${normal});--btn-hovered:url(${hovered});`;
 <style>
   .btn {
     border-style: solid;
+    border-width: 20px;
     border-image-source: var(--btn-normal);
     border-image-slice: 9 fill;
     border-image-repeat: round;
     image-rendering: pixelated;
-    image-rendering: crisp-edges;
+
+    box-sizing: border-box;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-sizing: border-box;
     min-height: 0;
+    max-width: 100%;
     line-height: 1;
     background: transparent;
     cursor: pointer;
@@ -64,35 +61,38 @@ const vars = `--btn-normal:url(${normal});--btn-hovered:url(${hovered});`;
     align-items: center;
     justify-content: center;
     gap: 0.4em;
-    font-family: var(--font-clangen), sans-serif;
-    color: var(--color-text);
-    line-height: 1;
     padding-bottom: 2px;
-    white-space: nowrap;
+    max-width: 100%;
+    color: var(--color-text);
+    font-family: var(--font-clangen), sans-serif;
+    line-height: 1;
+    text-align: center;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
   }
 
   .btn--sm {
-    border-width: 20px;
-    padding: 0 10px;
+    padding-inline: var(--space-xs);
   }
+
   .btn--sm .btn__label {
-    font-size: clamp(0.75rem, 1.6vmin, 0.9rem);
+    font-size: var(--pixel-sm);
   }
 
   .btn--md {
-    border-width: 20px;
-    padding: 0 14px;
+    padding-inline: var(--space-sm);
   }
+
   .btn--md .btn__label {
-    font-size: clamp(0.875rem, 2vmin, 1.05rem);
+    font-size: var(--pixel-md);
   }
 
   .btn--lg {
-    border-width: 20px;
-    padding: 0 20px;
-    min-width: 220px;
+    padding-inline: var(--space-md);
+    min-width: min(11rem, 100%);
   }
+
   .btn--lg .btn__label {
-    font-size: clamp(1rem, 2.4vmin, 1.25rem);
+    font-size: var(--pixel-lg);
   }
 </style>

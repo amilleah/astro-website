@@ -50,7 +50,12 @@ const screenshots = Object.entries(screenshotFiles)
             <div class="carousel__track" data-carousel-track>
               {screenshots.map(({ image, caption }) => (
                 <div class="carousel__slide">
-                  <Image src={image} alt={caption} widths={[480, 960]} sizes="(min-width: 720px) 720px, 100vw" />
+                  <Image
+                    src={image}
+                    alt={caption}
+                    widths={[480, 960]}
+                    sizes="(min-width: 720px) 720px, 100vw"
+                  />
                 </div>
               ))}
             </div>
@@ -71,19 +76,41 @@ const screenshots = Object.entries(screenshotFiles)
         </p>
 
         {screenshots.length > 1 && (
-          <div class="carousel__thumbs" data-carousel-thumbs>
-            {screenshots.map(({ image, caption }, i) => (
-              <button
-                type="button"
-                class="carousel__thumb"
-                data-carousel-thumb
-                data-caption={caption}
-                aria-label={`Go to ${caption}`}
-                aria-current={i === 0 ? "true" : "false"}
-              >
-                <Image src={image} alt="" width={400} />
-              </button>
-            ))}
+          <div class="carousel__thumbs">
+            <button
+              type="button"
+              class="carousel__page"
+              data-carousel-page-prev
+              aria-label="Previous thumbnails"
+            >
+              <Image src={arrowLeft} alt="" />
+            </button>
+
+            <div class="carousel__thumbviewport">
+              <div class="carousel__thumbrail" data-carousel-thumbrail>
+                {screenshots.map(({ image, caption }, i) => (
+                  <button
+                    type="button"
+                    class="carousel__thumb"
+                    data-carousel-thumb
+                    data-caption={caption}
+                    aria-label={`Go to ${caption}`}
+                    aria-current={i === 0 ? "true" : "false"}
+                  >
+                    <Image src={image} alt="" width={400} />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="carousel__page"
+              data-carousel-page-next
+              aria-label="More thumbnails"
+            >
+              <Image src={arrowRight} alt="" />
+            </button>
           </div>
         )}
       </div>
@@ -92,16 +119,14 @@ const screenshots = Object.entries(screenshotFiles)
 }
 
 <style>
-  @reference "tailwindcss";
-
   :global(.screenshots) h2 {
     margin: 0;
-    padding-bottom: 0.6rem;
-    border-bottom: 2px solid
+    padding-bottom: var(--space-2xs);
+    border-bottom: var(--border-thin) solid
       color-mix(in srgb, var(--color-heading) 35%, transparent);
     color: var(--color-heading);
     font-family: var(--font-clangen), sans-serif;
-    font-size: 1.45rem;
+    font-size: var(--text-xl);
     line-height: 1.35;
     font-weight: 500;
   }
@@ -115,14 +140,11 @@ const screenshots = Object.entries(screenshotFiles)
   }
 
   .carousel__frame {
-    width: calc(
-      100% + 2 * var(--card-pad, clamp(1.25rem, 4cqi, 2.25rem))
-    );
-    margin-inline: calc(-1 * var(--card-pad, clamp(1.25rem, 4cqi, 2.25rem)));
+    width: 100%;
     display: flex;
     align-items: stretch;
-    border: 2px solid var(--color-border);
-    border-radius: 14px;
+    border: var(--border-thin) solid var(--color-border);
+    border-radius: var(--radius-lg);
     overflow: hidden;
   }
 
@@ -135,14 +157,14 @@ const screenshots = Object.entries(screenshotFiles)
     border: none;
     padding: 0;
     cursor: pointer;
-    width: clamp(32px, 6vw, 56px);
+    width: clamp(1.75rem, 6vw, 3rem);
     transition:
       background-color 0.15s ease,
       filter 0.12s ease;
   }
 
   .carousel__arrow :global(img) {
-    width: clamp(14px, 2.2vw, 22px);
+    width: clamp(0.75rem, 2.2vw, 1.15rem);
     height: auto;
     image-rendering: pixelated;
     pointer-events: none;
@@ -179,32 +201,79 @@ const screenshots = Object.entries(screenshotFiles)
     width: 100%;
     height: auto;
     display: block;
-    image-rendering: pixelated;
+    image-rendering: auto;
   }
 
   .carousel__caption {
     margin: 0;
     color: var(--color-text-muted);
     font-family: var(--font-roboto), sans-serif;
-    font-size: 1rem;
+    font-size: var(--text-base);
     text-align: center;
   }
 
   .carousel__thumbs {
+    --thumbs-per-page: 4;
+    --thumb-gap: calc(var(--space) * 0.4);
     width: 100%;
     display: flex;
-    gap: calc(var(--space) * 0.4);
+    align-items: center;
+    gap: var(--thumb-gap);
+  }
+
+  .carousel__thumbviewport {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-x: hidden;
+    scrollbar-width: none;
+  }
+
+  .carousel__thumbviewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carousel__thumbrail {
+    display: flex;
+    gap: var(--thumb-gap);
+  }
+
+  .carousel__page {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(1.25rem, 3vw, 1.75rem);
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: opacity 0.12s ease;
+  }
+
+  .carousel__page :global(img) {
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+  }
+
+  .carousel__page[disabled] {
+    opacity: 0.25;
+    cursor: default;
   }
 
   .carousel__thumb {
-    flex: 1 1 0;
+    flex: 0 0
+      calc(
+        (100% - (var(--thumbs-per-page) - 1) * var(--thumb-gap)) /
+          var(--thumbs-per-page)
+      );
     min-width: 0;
     padding: 0;
     line-height: 0;
     background: transparent;
     cursor: pointer;
-    border: 2px solid transparent;
-    border-radius: 8px;
+    border: var(--border-thin) solid transparent;
+    border-radius: var(--radius-md);
     overflow: hidden;
     opacity: 0.6;
     transition:
@@ -216,7 +285,7 @@ const screenshots = Object.entries(screenshotFiles)
     display: block;
     width: 100%;
     height: auto;
-    image-rendering: pixelated;
+    image-rendering: auto;
   }
 
   .carousel__thumb:hover {
@@ -226,6 +295,12 @@ const screenshots = Object.entries(screenshotFiles)
   .carousel__thumb[aria-current="true"] {
     opacity: 1;
     border-color: var(--color-heading);
+  }
+
+  @media (width >= 40rem) {
+    .carousel__thumbs {
+      --thumbs-per-page: 7;
+    }
   }
 </style>
 
@@ -251,22 +326,70 @@ const screenshots = Object.entries(screenshotFiles)
           "[data-carousel-caption]",
         );
         const thumbs = Array.from(
-          carousel.querySelectorAll<HTMLButtonElement>(
-            "[data-carousel-thumb]",
-          ),
+          carousel.querySelectorAll<HTMLButtonElement>("[data-carousel-thumb]"),
+        );
+        const rail = carousel.querySelector<HTMLElement>(
+          "[data-carousel-thumbrail]",
+        );
+        const pagePrev = carousel.querySelector<HTMLButtonElement>(
+          "[data-carousel-page-prev]",
+        );
+        const pageNext = carousel.querySelector<HTMLButtonElement>(
+          "[data-carousel-page-next]",
         );
 
         let index = 0;
+        let page = 0;
+
+        function perPage() {
+          const scope = rail?.closest(".carousel__thumbs") ?? carousel;
+          const raw = getComputedStyle(scope)
+            .getPropertyValue("--thumbs-per-page")
+            .trim();
+          return Math.max(1, parseInt(raw, 10) || 7);
+        }
+
+        function pageCount() {
+          return Math.max(1, Math.ceil(thumbs.length / perPage()));
+        }
+
+        function renderPage() {
+          if (!rail) return;
+          page = Math.min(Math.max(page, 0), pageCount() - 1);
+          const viewport = rail.parentElement;
+          if (viewport) {
+            const gap = parseFloat(getComputedStyle(rail).columnGap) || 0;
+            const step = viewport.clientWidth + gap;
+            viewport.scrollLeft = page * step;
+          }
+          if (pagePrev) pagePrev.disabled = page === 0;
+          if (pageNext) pageNext.disabled = page >= pageCount() - 1;
+        }
 
         function render() {
           slides.forEach((slide, i) =>
             slide.classList.toggle("is-active", i === index),
           );
-          if (caption) caption.textContent = thumbs[index]?.dataset.caption ?? "";
+          if (caption)
+            caption.textContent = thumbs[index]?.dataset.caption ?? "";
           thumbs.forEach((thumb, i) =>
             thumb.setAttribute("aria-current", String(i === index)),
           );
+          page = Math.floor(index / perPage());
+          renderPage();
         }
+
+        pagePrev?.addEventListener("click", () => {
+          page -= 1;
+          renderPage();
+        });
+
+        pageNext?.addEventListener("click", () => {
+          page += 1;
+          renderPage();
+        });
+
+        window.addEventListener("resize", renderPage);
 
         prevBtn?.addEventListener("click", () => {
           index = (index - 1 + slides.length) % slides.length;

@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@iconify-json/fa7-solid": "^1.2.5",
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@iconify-json/fa7-brands": "^1.2.4",
     "prettier": "3.9.6",
-    "prettier-plugin-astro": "0.14.1"
+    "prettier-plugin-astro": "0.14.1",
+    "sharp": "^0.35.3"
   }
 }

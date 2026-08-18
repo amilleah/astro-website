@@ -12,12 +12,7 @@ interface Props {
   subtitle?: string;
 }
 
-const {
-  image = defaultHeaderImage,
-  alt = "",
-  title,
-  subtitle,
-} = Astro.props;
+const { image = defaultHeaderImage, alt = "", title, subtitle } = Astro.props;
 ---
 
 <article class="hero">
@@ -54,7 +49,7 @@ const {
   }
 
   .header-wrap {
-    width: calc(100% - 10px);
+    width: calc(100% - var(--frame-width) * 0.78);
     margin-inline: auto;
     position: relative;
     z-index: 3;
@@ -80,10 +75,10 @@ const {
     filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
   }
 
-  :global(.header-frame) {
+  :global(.frame.header-frame) {
     --frame-image: var(--frame-header-image);
+    --frame-overlap: calc(var(--frame-width) * 1.5);
     width: 100%;
-    margin-top: 0;
     position: relative;
     z-index: 2;
   }
@@ -105,7 +100,7 @@ const {
   }
 
   :global(.header-frame .content) h2 {
-    font-size: clamp(2.75rem, 8vmin, 4.5rem);
+    font-size: var(--header-title-size, var(--pixel-hero));
     line-height: normal;
     font-family: var(--font-clangen), sans-serif;
     text-shadow: 4px 8px 4px rgba(0, 0, 0, 0.75);
@@ -116,7 +111,7 @@ const {
   h3 {
     color: var(--color-heading);
     font-family: var(--font-clangen), sans-serif;
-    font-size: 1.125rem;
+    font-size: var(--text-xl);
     line-height: 1;
     font-weight: 500;
     margin-top: calc(var(--space) * -1.5);

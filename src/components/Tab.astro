@@ -1,0 +1,79 @@
+---
+import normal from "../assets/generated_buttons/horizontal_tab_normal.png?url";
+import activeSprite from "../assets/generated_buttons/horizontal_tab_normal_dark.png?url";
+
+interface Props {
+  href?: string;
+  active?: boolean;
+  class?: string;
+  [key: string]: any;
+}
+
+const { href, active = false, class: className, ...rest } = Astro.props;
+const Tag = href ? "a" : "button";
+const vars = `--tab-normal:url(${normal});--tab-active:url(${activeSprite});`;
+---
+
+<Tag
+  href={href}
+  role="tab"
+  aria-selected={active ? "true" : "false"}
+  class:list={["tab", { "tab--active": active }, className]}
+  style={vars}
+  {...rest}
+>
+  <span class="tab__label"><slot /></span>
+</Tag>
+
+<style>
+  .tab {
+    border-style: solid;
+    border-width: 12px 12px 0 10px;
+    border-image-source: var(--tab-normal);
+    border-image-slice: 10 fill;
+    border-image-repeat: stretch;
+    image-rendering: pixelated;
+
+    position: relative;
+    z-index: var(--z-raised);
+    box-sizing: border-box;
+    max-width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--space-sm) 12px;
+    background: transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: padding-bottom 0.08s ease;
+  }
+
+  .tab__label {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-text);
+    font-family: var(--font-clangen), sans-serif;
+    max-width: 100%;
+    font-size: var(--pixel-md);
+    line-height: 1;
+    overflow-wrap: anywhere;
+  }
+
+  .tab--active,
+  .tab:hover:not(.tab--active) {
+    z-index: var(--z-top);
+    border-image-source: var(--tab-active);
+    background-color: var(--color-surface);
+    padding-bottom: 10px;
+  }
+
+  .tab--active::after {
+    content: "";
+    position: absolute;
+    left: calc(-1 * var(--space-2xs));
+    right: calc(-1 * var(--space-2xs));
+    bottom: calc(-1 * var(--divider, var(--border-divider)));
+    height: var(--divider, var(--border-divider));
+    background-color: var(--color-surface);
+  }
+</style>

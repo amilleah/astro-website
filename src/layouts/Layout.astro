@@ -8,15 +8,23 @@ import { discord_link_store } from "../constants";
 import DiscordImageButton from "../components/DiscordImageButton.astro";
 import Button from "../components/Button.astro";
 
-const { title = "ClanGen", linkToDevelopment = false } = Astro.props;
-const downloadBaseUrl = ".";
+const { title = "ClanGen" } = Astro.props;
+
+const navLinks = [
+  {
+    href: "https://clangen.io/docs/",
+    label: "Documentation",
+    external: true,
+  },
+  { href: "/download", label: "Download", external: false },
+];
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/png" href="/icon.png" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
@@ -25,7 +33,7 @@ const downloadBaseUrl = ".";
   </head>
   <body>
     <div class="container_internal">
-      <div class="navbar">
+      <nav class="navbar">
         <a class="navbar__title" href="/">
           <img
             width={icon.width}
@@ -35,81 +43,55 @@ const downloadBaseUrl = ".";
           />
           <h1>ClanGen</h1>
         </a>
+
         <div class="navbar__links">
-          <Button
-            href="https://clangen.io/docs/"
-            size="sm"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Documentation
-          </Button>
           {
-            linkToDevelopment ? (
+            navLinks.map(({ href, label, external }) => (
               <Button
-                href={downloadBaseUrl + "/download-development"}
+                href={href}
                 size="sm"
-                class="whitespace-nowrap"
+                target={external ? "_blank" : undefined}
+                rel={external ? "noreferrer" : undefined}
               >
-                Download development
+                {label}
               </Button>
-            ) : (
-              <Button
-                href={downloadBaseUrl + "/download"}
-                size="sm"
-              >
-                Download
-              </Button>
-            )
+            ))
           }
           <DiscordImageButton />
         </div>
 
-        <div class="navbar__hamburger">
-          <button
-            id="hamburger-button"
-            onclick="() => (navVisible = !navVisible)"
-          >
-            <Icon width="2em" height="2em" name="fa7-solid:bars" />
-          </button>
-        </div>
-      </div>
+        <button
+          id="hamburger-button"
+          class="navbar__hamburger"
+          type="button"
+          aria-controls="mobile-nav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <Icon width="2em" height="2em" name="fa7-solid:bars" />
+        </button>
+      </nav>
 
-      <div id="mobile-nav" class="mobile-nav hidden">
-        <div class="mt-3 mb-5 mobile-nav__link-container">
-          <Button
-            href="https://clangen.io/docs/"
-            size="sm"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Documentation
-          </Button>
-        </div>
-        <div class="mb-5 mobile-nav__link-container">
-          {
-            linkToDevelopment ? (
+      <div id="mobile-nav" class="mobile-nav">
+        {
+          navLinks.map(({ href, label, external }) => (
+            <div class="mobile-nav__item">
               <Button
-                href={downloadBaseUrl + "/download-development"}
+                href={href}
                 size="sm"
-                class="whitespace-nowrap"
+                target={external ? "_blank" : undefined}
+                rel={external ? "noreferrer" : undefined}
               >
-                Download development
+                {label}
               </Button>
-            ) : (
-              <Button
-                href={downloadBaseUrl + "/download"}
-                size="sm"
-              >
-                Download
-              </Button>
-            )
-          }
-        </div>
-        <div class="mb-2 mobile-nav__link-container">
+            </div>
+          ))
+        }
+        <div class="mobile-nav__item">
           <Button href={discord_link_store} size="sm">Discord</Button>
         </div>
       </div>
+
       <slot />
     </div>
   </body>
@@ -118,39 +100,26 @@ const downloadBaseUrl = ".";
 <script>
   import { getCurrentSeason } from "../lib/postlight/seasons";
 
-  const mobileNavElement = document.getElementById("mobile-nav");
-  const rootElement: HTMLElement | null = document.querySelector(":root");
+  const mobileNav = document.getElementById("mobile-nav");
+  const hamburger = document.getElementById("hamburger-button");
+  const rootElement = document.querySelector<HTMLElement>(":root");
 
-  let navVisible = false;
-  document
-    .getElementById("hamburger-button")
-    ?.addEventListener("click", (e) => {
-      navVisible = !navVisible;
-      if (navVisible) {
-        mobileNavElement?.classList.add("block");
-        mobileNavElement?.classList.remove("hidden");
-      } else {
-        mobileNavElement?.classList.remove("block");
-        mobileNavElement?.classList.add("hidden");
-      }
-    });
+  hamburger?.addEventListener("click", () => {
+    const open = mobileNav?.classList.toggle("is-open") ?? false;
+    hamburger.setAttribute("aria-expanded", String(open));
+  });
 
-  let campType = ["beach", "forest", "mountainous", "plains"][
-    Math.floor(Math.random() * 4)
-  ];
-  let campNumber = Math.floor(Math.random() * 3) + 1;
+  const seasonByHumanSeason: Record<string, string> = {
+    spring: "newleaf",
+    summer: "greenleaf",
+    fall: "leaffall",
+    winter: "leafbare",
+  };
 
-  const currentHumanSeason = getCurrentSeason(new Date());
-  let season = "newleaf";
-  if (currentHumanSeason === "spring") {
-    season = "newleaf";
-  } else if (currentHumanSeason === "summer") {
-    season = "greenleaf";
-  } else if (currentHumanSeason === "winter") {
-    season = "leafbare";
-  } else if (currentHumanSeason === "fall") {
-    season = "leaffall";
-  }
+  const campTypes = ["beach", "forest", "mountainous", "plains"];
+  const campType = campTypes[Math.floor(Math.random() * campTypes.length)];
+  const campNumber = Math.floor(Math.random() * 3) + 1;
+  const season = seasonByHumanSeason[getCurrentSeason(new Date())] ?? "newleaf";
 
   rootElement?.style.setProperty(
     "--background-url",
@@ -159,79 +128,123 @@ const downloadBaseUrl = ".";
 </script>
 
 <style>
-  @reference "tailwindcss";
-
-  :global(body, html) {
+  :global(html),
+  :global(body) {
     padding: 0;
     margin: 0;
-    color: white;
-    background-color: #302915;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    font-family: var(--font-roboto), sans-serif;
   }
 
   :global(body) {
+    display: flex;
+    min-height: 100vh;
     background-image: var(--background-url);
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
     image-rendering: pixelated;
-    image-rendering: crisp-edges;
-    min-height: 100vh;
-    height: fit-content;
-    display: flex;
   }
 
   .container_internal {
     display: flex;
     flex-direction: column;
-    backdrop-filter: blur(8px);
-    width: 100%;
     flex-grow: 1;
+    width: 100%;
+    backdrop-filter: blur(8px);
   }
 
   .navbar {
-    background-color: #302915;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-    @apply px-1 lg:px-2 py-2;
+    position: sticky;
+    top: 0;
+    z-index: var(--z-nav);
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-sizing: content-box;
-  }
-  .navbar__title {
-    display: flex;
-    align-items: center;
-    @apply h-fit;
-  }
-  .navbar__title h1 {
-    @apply text-xl;
-    font-family: var(--font-clangen), sans-serif;
-    color: #f1e5cb;
-    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    font-weight: 700;
-  }
-  .navbar__title img {
-    @apply h-9 w-auto mr-2;
-  }
-  .navbar__links {
-    @apply hidden gap-2 ml-auto sm:flex;
-    align-items: center;
-  }
-  .navbar__hamburger {
-    @apply pt-2 pr-2 ml-auto sm:hidden;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-2xs);
+    background-color: var(--color-bg);
+    box-shadow: var(--shadow-sm);
+    box-sizing: border-box;
   }
 
   .navbar a {
-    text-decoration: none;
     display: flex;
+    text-decoration: none;
+  }
+
+  .navbar__title {
+    align-items: center;
+    height: fit-content;
+  }
+
+  .navbar__title img {
+    height: 2.25rem;
+    width: auto;
+    margin-right: var(--space-xs);
+  }
+
+  .navbar__title h1 {
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-clangen), sans-serif;
+    font-size: var(--text-lg);
+    font-weight: 700;
+    text-shadow: var(--shadow-text-sm);
+  }
+
+  .navbar__links {
+    display: none;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-left: auto;
+  }
+
+  .navbar__hamburger {
+    margin-left: auto;
+    padding: var(--space-xs) var(--space-xs) 0 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
   }
 
   .mobile-nav {
-    @apply border-r-8 border-[#7e6041] py-2 sm:hidden;
-  }
-  .mobile-nav__link-container {
-    width: fit-content;
-    @apply ml-auto;
+    display: none;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-lg);
+    padding: var(--space-sm) var(--space-xs);
+    border-right: var(--space-xs) solid var(--color-border-soft);
   }
 
+  .mobile-nav.is-open {
+    display: flex;
+  }
+
+  .mobile-nav__item {
+    width: fit-content;
+  }
+
+  @media (width >= 40rem) {
+    .navbar {
+      padding-inline: var(--space-xs);
+    }
+
+    .navbar__links {
+      display: flex;
+    }
+
+    .navbar__hamburger,
+    .mobile-nav,
+    .mobile-nav.is-open {
+      display: none;
+    }
+  }
+
+  @media (width >= 64rem) {
+    .navbar {
+      padding-inline: var(--space-sm);
+    }
+  }
 </style>

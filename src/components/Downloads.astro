@@ -1,0 +1,183 @@
+---
+import PlatformBox from "./PlatformBox.astro";
+
+interface Props {
+  channel: "stable" | "development";
+  label: string;
+}
+
+const { channel, label } = Astro.props;
+const isDev = channel === "development";
+const artifacts = `/api/v1/Update/Channels/${channel}/Releases/Latest/Artifacts/`;
+
+const platformBoxes = [
+  {
+    platform: "Windows",
+    icon: "fa7-brands:windows",
+    url: `${artifacts}win10+`,
+    additionalUrls: [
+      { url: `${artifacts}win64`, text: "Windows 7/8/8.1 (x64)" },
+    ],
+  },
+  {
+    platform: "macOS",
+    icon: "fa7-brands:apple",
+    url: `${artifacts}macOS`,
+    subtitle: "(for macOS 10.13 or later)",
+    additionalUrls: [],
+  },
+  {
+    platform: "Linux",
+    icon: "fa7-brands:linux",
+    url: `${artifacts}linux2.35`,
+    additionalUrls: [],
+  },
+];
+---
+
+<div class="channel" data-channel={channel}>
+  {
+    isDev && (
+      <div class="section-box disclaimer">
+        <h2>This is an in-development version of the game.</h2>
+        <p>
+          Please note that we <b>DO NOT</b> offer any kind of support for this
+          version of the game unless you are an official beta tester.
+        </p>
+        <p>
+          This version <b>can</b> and <b>will</b> break.
+        </p>
+        <p class="caution">Proceed with caution!</p>
+      </div>
+    )
+  }
+
+  <div class="section-box">
+    <b>{label}</b>: <span data-version>???</span>
+  </div>
+
+  <div class="section-box" data-recommended hidden>
+    <h2>Recommended download for your system:</h2>
+    <div class="platformBox recommended">
+      <div class="platformHeader" data-rec-name>Name</div>
+      <div class="platformDownload">
+        <a
+          class="downloadButton"
+          data-rec-link
+          href="/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Download
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="downloadBoxes">
+    {platformBoxes.map((box) => <PlatformBox platformBoxData={box} />)}
+  </div>
+</div>
+
+<script>
+  import { getOS, os } from "../lib/getOS";
+
+  const byOS: Record<string, { name: string; artifact: string }> = {
+    [os.ChromeOS]: { name: "Linux", artifact: "linux2.35" },
+    [os.Linux]: { name: "Linux", artifact: "linux2.35" },
+    [os.macOS]: { name: "macOS", artifact: "macOS" },
+    [os.Windows_10plus]: { name: "Windows (x64)", artifact: "win10+" },
+    [os.Windows_x64]: { name: "Windows 7/8/8.1 (x64)", artifact: "win64" },
+  };
+
+  document.querySelectorAll<HTMLElement>("[data-channel]").forEach((el) => {
+    const base = `/api/v1/Update/Channels/${el.dataset.channel}/Releases/Latest`;
+
+    const versionEl = el.querySelector("[data-version]");
+    fetch(base)
+      .then((res) => res.json())
+      .then((json) => {
+        if (versionEl) versionEl.textContent = json.release.name;
+      })
+      .catch(() => {});
+
+    getOS().then((operatingSystem) => {
+      const match = byOS[operatingSystem];
+      const box = el.querySelector<HTMLElement>("[data-recommended]");
+      const name = el.querySelector<HTMLElement>("[data-rec-name]");
+      const link = el.querySelector<HTMLAnchorElement>("[data-rec-link]");
+      if (!match || !box || !name || !link) return;
+
+      name.textContent = match.name;
+      link.href = `${base}/Artifacts/${match.artifact}`;
+      box.hidden = false;
+    });
+  });
+</script>
+
+<style>
+  .channel {
+    width: 100%;
+    min-width: 0;
+    font-family: var(--font-roboto), sans-serif;
+  }
+
+  .section-box {
+    width: 100%;
+    margin-block: var(--space-xs);
+    padding: var(--space-lg);
+    border: var(--border-hairline) solid var(--cell-border);
+    border-radius: var(--radius-md);
+    background-color: var(--cell-header);
+    color: var(--cell-text);
+    text-align: center;
+    font-size: var(--text-md);
+  }
+
+  .section-box:first-child {
+    margin-top: 0;
+  }
+
+  .section-box h2 {
+    margin-bottom: 1em;
+    font-weight: 700;
+  }
+
+  .disclaimer h2 {
+    color: var(--color-warn);
+  }
+
+  .disclaimer .caution {
+    padding-top: var(--space-sm);
+  }
+
+  .recommended {
+    width: 100%;
+    margin: auto;
+  }
+
+  .downloadBoxes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    justify-content: center;
+    width: 100%;
+    margin: auto;
+    margin-top: var(--space-xl);
+  }
+
+  @media (width >= 80rem) {
+    .recommended {
+      width: calc((100% - 2 * var(--space-xs)) / 3);
+    }
+
+    .downloadBoxes {
+      flex-direction: row;
+      align-items: stretch;
+    }
+
+    .downloadBoxes :global(.platformBox) {
+      flex: 1 1 0;
+    }
+  }
+</style>

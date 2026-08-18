@@ -9,9 +9,13 @@ import { Icon } from "astro-icon/components";
 
 <Layout>
   <div class="wrapper">
-    <Header title="ClanGen" subtitle="Build your Clan. Tell their story." />
+    <Header title="ClanGen" subtitle="Build your Clan. Tell their story.">
+      <Button slot="action" href="/download" size="lg">Download Now</Button>
+    </Header>
 
     <Frame class="info">
+      <h2>Every cat has their own story</h2>
+
       <p>
         ClanGen is a casual simulation game with a focus on storytelling.
         <br /><br />
@@ -20,10 +24,9 @@ import { Icon } from "astro-icon/components";
         strategies and relationships, or simply watch the narratives unfold.
         <br /><br />
 
-        With <b>millions</b> of unique cat appearances and <b>hundreds</b> of
-        events to discover, the possibilities are endless.
-
-        Every cat has their own story.
+        With <b>millions</b> of unique cat appearances and <b>hundreds</b> of events
+        to discover, the possibilities are endless.
+        <br /><br />
       </p>
     </Frame>
 
@@ -32,8 +35,8 @@ import { Icon } from "astro-icon/components";
 
       <p>
         Originally created by just-some-cat on Tumblr, ClanGen was forked by
-        Sablesteel and is now steadily updated and maintained by an
-        ever-growing community of volunteers from all over the world.
+        Sablesteel and is now steadily updated and maintained by an ever-growing
+        community of volunteers from all over the world.
       </p>
 
       <div class="gh-slot">
@@ -53,8 +56,6 @@ import { Icon } from "astro-icon/components";
 </Layout>
 
 <style>
-  @reference "tailwindcss";
-
   .wrapper {
     width: var(--content-width);
     margin: 0 auto;
@@ -65,19 +66,6 @@ import { Icon } from "astro-icon/components";
     gap: var(--space);
     padding-top: var(--space);
     padding-bottom: calc(var(--space) * 2);
-  }
-
-  .features {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--frame-gap);
-    align-items: stretch;
-  }
-
-  @media (max-width: 640px) {
-    .features {
-      grid-template-columns: 1fr;
-    }
   }
 
   :global(.info),
@@ -93,38 +81,14 @@ import { Icon } from "astro-icon/components";
     filter: brightness(1.03);
   }
 
-  :global(.info--lead) {
-    align-items: center;
-    text-align: center;
-  }
-
-  :global(.info--lead) p {
-    width: 100%;
-    font-size: 1.6rem;
-  }
-
-  .tagline {
-    color: var(--color-heading);
-  }
-
-  :global(.info--media) {
-    align-items: center;
-    justify-content: center;
-  }
-
-  :global(.info--media) img {
-    width: 100%;
-    height: auto;
-    image-rendering: pixelated;
-  }
-
   :global(.info) h2 {
     margin: 0;
-    padding-bottom: 0.6rem;
-    border-bottom: 2px solid color-mix(in srgb, var(--color-heading) 35%, transparent);
+    padding-bottom: var(--space-2xs);
+    border-bottom: var(--border-thin) solid
+      color-mix(in srgb, var(--color-heading) 35%, transparent);
     color: var(--color-heading);
     font-family: var(--font-clangen), sans-serif;
-    font-size: 1.45rem;
+    font-size: var(--text-xl);
     line-height: 1.35;
     font-weight: 500;
   }
@@ -132,7 +96,7 @@ import { Icon } from "astro-icon/components";
   :global(.info) p {
     margin: 0;
     color: var(--color-text);
-    font-size: 1.5rem;
+    font-size: var(--text-lead);
     line-height: 1.35;
   }
 

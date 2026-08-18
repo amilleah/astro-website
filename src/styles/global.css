@@ -6,6 +6,7 @@
   --color-bg: #302915;
   --color-surface: #2f2918;
   --color-border: #776045;
+  --color-border-soft: #7e6041;
 
   --color-text: #efe5ce;
   --color-heading: #ac9d72;
@@ -22,15 +23,62 @@
   --color-download-hover: #3ca14f;
   --color-warn: #df3b3c;
 
-  --radius-card: 0;
-  --space: 24px;
-  --hero-width: min(100% - 2 * var(--space), 960px);
-  --content-width: min(100% - 2 * var(--space), 960px);
-  --header-offset: calc(var(--space) + clamp(var(--space) * 2, 10vh, 12rem));
+  --space-4xs: 0.125rem;
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.375rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.25rem;
+  --space-xl: 1.5rem;
+  --space-2xl: 2rem;
+  --space: var(--space-lg);
 
+  --text-xs: 14px;
+  --text-sm: 16px;
+  --text-base: 18px;
+  --text-md: 20px;
+  --text-lg: 24px;
+  --text-xl: 28px;
+  --text-lead: 30px;
+  --text-2xl: clamp(1.6rem, 4vmin, 2.25rem);
+  --text-hero: clamp(2.75rem, 8vmin, 4.5rem);
+
+  --pixel-sm: 18px;
+  --pixel-md: 24px;
+  --pixel-lg: 28px;
+  --pixel-xl: 40px;
+  --pixel-hero: 64px;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-card: 0;
+
+  --border-hairline: 1px;
+  --border-thin: 2px;
+  --border-divider: 3px;
+
+  --z-base: 1;
+  --z-raised: 2;
+  --z-top: 3;
+  --z-nav: 20;
+
+  --content-width: min(100% - 2 * var(--space), 70rem);
+  --hero-width: var(--content-width);
+  --header-offset: calc(var(--space) + clamp(var(--space-2xl), 10vh, 12rem));
+  --card-pad: clamp(var(--space-lg), 4cqi, var(--space-2xl));
+
+  --breakpoint-sm: 40rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+
+  --shadow-sm: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
   --shadow-card:
-    0px 10px 10px 0px rgba(0, 0, 0, 0.22), 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-  --shadow-sm: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    0 10px 10px 0 rgba(0, 0, 0, 0.22), 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  --shadow-image: 0 6px 10px rgba(0, 0, 0, 0.35);
+  --shadow-text: 4px 8px 4px rgba(0, 0, 0, 0.75);
+  --shadow-text-sm: 0 4px 4px rgba(0, 0, 0, 0.25);
 
   --frame-image: url("../assets/frame.png");
   --frame-header-image: url("../assets/frame_header.png");
@@ -38,21 +86,9 @@
   --frame-gap: calc(var(--space) + 2 * var(--frame-width));
 }
 
-:is(a, button).btn.gh-cta {
-  font-size: 1rem;
-  border-image-slice: 7 fill;
-  border-width: 14px;
-}
-
-:is(a, button).btn.gh-cta .btn__label {
-  padding-bottom: 0;
-}
-
-.btn.gh-cta .btn__label {
-  gap: 0.25em;
-}
-
-.btn.gh-cta svg {
-  width: 1.6em;
-  height: 1.6em;
+img,
+picture,
+canvas,
+video {
+  image-rendering: pixelated;
 }

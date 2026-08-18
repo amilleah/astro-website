@@ -2,54 +2,46 @@
 import { Icon } from "astro-icon/components";
 import "../styles/platform-box.css";
 
+interface AdditionalUrl {
+  url: string;
+  text: string;
+}
+
 interface PlatformBoxData {
   platform: string;
-  icon: any;
+  icon: string;
   url: string;
   subtitle?: string;
-  additionalUrls: Array<{ url: string; text: string }>;
+  additionalUrls: AdditionalUrl[];
 }
 
 interface Props {
   platformBoxData: PlatformBoxData;
 }
 
-const platformBoxData = Astro.props.platformBoxData;
+const { platform, icon, url, subtitle, additionalUrls } =
+  Astro.props.platformBoxData;
 ---
 
 <div class="platformBox">
   <div class="platformHeader">
-    <Icon
-      width="1.25em"
-      height="1.25em"
-      class="inline-block"
-      name={platformBoxData.icon}
-    />{" "}
-    {platformBoxData.platform}
+    <Icon width="1.25em" height="1.25em" name={icon} />
+    {platform}
   </div>
+
   <div class="platformDownload">
-    <a
-      href={platformBoxData.url}
-      target="_blank"
-      rel="noreferrer"
-      class="downloadButton">Download</a
-    >
+    <a href={url} target="_blank" rel="noreferrer" class="downloadButton">
+      Download
+    </a>
+
     {
-      platformBoxData.additionalUrls.map((additionalUrl) => (
-        <a
-          href={additionalUrl.url}
-          target="_blank"
-          rel="noreferrer"
-          class="altDownload"
-        >
-          {additionalUrl.text}
+      additionalUrls.map(({ url: altUrl, text }) => (
+        <a href={altUrl} target="_blank" rel="noreferrer" class="altDownload">
+          {text}
         </a>
       ))
     }
-    {
-      platformBoxData.subtitle && (
-        <span class="subtitle">{platformBoxData.subtitle}</span>
-      )
-    }
+
+    {subtitle && <span class="subtitle">{subtitle}</span>}
   </div>
 </div>
