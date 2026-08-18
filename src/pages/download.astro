@@ -52,6 +52,9 @@ import { Icon } from "astro-icon/components";
 
   function activate(name) {
     const active = names.includes(name) ? name : names[0];
+    if (location.hash.slice(1) !== active) {
+      history.replaceState(null, "", `#${active}`);
+    }
     tabs.forEach((tab) => {
       const on = tab.getAttribute("data-tab") === active;
       tab.classList.toggle("tab--active", on);
